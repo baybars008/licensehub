@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= title || 'LicenseHub' %></title>
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+  <nav class="sidebar">
+    <div class="logo">🔑 LicenseHub</div>
+    <a href="/" class="<%= page==='dashboard'?'active':'' %>">Dashboard</a>
+    <a href="/customers" class="<%= page==='customers'?'active':'' %>">Müşteriler</a>
+    <a href="/licenses" class="<%= page==='licenses'?'active':'' %>">Lisanslar</a>
+    <a href="/logs" class="<%= page==='logs'?'active':'' %>">Loglar</a>
+    <form action="/logout" method="POST" style="margin-top:auto">
+      <button type="submit" class="logout-btn">Çıkış</button>
+    </form>
+  </nav>
+  <main class="content">
+    <%- body %>
+  </main>
+</body>
+</html>

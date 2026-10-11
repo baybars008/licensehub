@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lisanslar — LicenseHub</title>
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+  <nav class="sidebar">
+    <div class="logo">🔑 LicenseHub</div>
+    <a href="/">Dashboard</a>
+    <a href="/customers">Müşteriler</a>
+    <a href="/licenses" class="active">Lisanslar</a>
+    <a href="/logs">Loglar</a>
+    <form action="/logout" method="POST" style="margin-top:auto">
+      <button type="submit" class="logout-btn">Çıkış</button>
+    </form>
+  </nav>
+  <main class="content">
+    <h1>Lisanslar</h1>
+
+    <div class="card">
+      <h2>Yeni Lisans</h2>
+      <form method="POST" action="/licenses" class="form-grid">
+        <div class="form-group">
+          <label>Müşteri</label>
+          <select name="customer_id" required>
+            <option value="">Seç...</option>
+            <% customers.forEach(c => { %><option value="<%= c.id %>"><%= c.name %> (<%= c.email %>)</option><% }) %>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Ürün</label>
+          <input type="text" name="product" placeholder="getordra / qrmenu / shiftiq" required list="product-list">
+          <datalist id="product-list">
+            <option value="getordra"><option value="qrmenu"><option value="shiftiq">
+          </datalist>
+        </div>
+        <div class="form-group">
+          <label>Domain</label>
+          <input type="text" name="domain" placeholder="musteri.getordra.com" required>
+        </div>
+        <div class="form-group">
+          <label>Plan</label>
+          <select name="plan">
+            <option value="starter">Starter</option>
+            <option value="pro">Pro</option>
+            <option value="enterprise">Enterprise</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Başlangıç</label>
+          <input type="date" name="starts_at" required value="<%= new Date().toISOString().split('T')[0] %>">
+        </div>
+        <div class="form-group">
+          <label>Bitiş (boş = süresiz)</label>
+          <input type="date" name="expires_at">
+        </div>
+        <div class="form-group full-width">
+          <label>Not</label>
+          <input type="text" name="notes" placeholder="Opsiyonel not">
+        </div>
+        <div class="form-group">
+          <button type="submit" class="btn-primary">Lisans Oluştur</button>
+        </div>
+      </form>
+    </div>
+
+    <div class="filter-bar">
+      <form method="GET" action="/licenses" class="inline-form">
+        <input type="text" name="search" placeholder="Domain / müşteri ara" value="<%= filters.search || '' %>">
+        <select name="status">
+          <option value="">Tüm durumlar</option>
+          <option value="active" <%=filters.status==='active'?'selected':''%>>Aktif</option>
+          <option value="suspended" <%=filters.status==='suspended'?'selected':''%>>Askıya alınmış</option>
+          <option value="expired" <%=filters.status==='expired'?'selected':''%>>Süresi dolmuş</option>
+        </select>
+        <select name="product">
+          <option value="">Tüm ürünler</option>
+          <% products.forEach(p => { %><option value="<%= p %>" <%=filters.product===p?'selected':''%>><%= p %></option><% }) %>
+        </select>
+        <button type="submit">Filtrele</button>
+      </form>
+    </div>
+
+    <table class="data-table">
+      <thead><tr><th>Müşteri</th><th>Domain</th><th>Ürün</th><th>Plan</th><th>Durum</th><th>Bitiş</th><th>API Key</th><th></th></tr></thead>
+      <tbody>
+        <% licenses.forEach(l => { %>
+        <tr>
+          <td><small><%= l.customer_name %><br><span class="muted"><%= l.customer_email %></span></small></td>
+          <td><code><%= l.domain %></code></td>
+          <td><span class="badge"><%= l.product %></span></td>
+          <td><%= l.plan %></td>
+          <td><span class="status status-<%= l.status %>"><%= l.status %></span></td>
+          <td><%= l.expires_at || '∞' %></td>
+          <td><code class="apikey"><%= l.api_key %></code></td>
+          <td class="actions">
+            <% if (l.status !== 'suspended') { %>
+            <form method="POST" action="/licenses/<%= l.id %>/status">
+              <input type="hidden" name="status" value="suspended">
+              <button class="btn-warn-sm">Askıya Al</button>
+            </form>
+            <% } else { %>
+            <form method="POST" action="/licenses/<%= l.id %>/status">
+              <input type="hidden" name="status" value="active">
+              <button class="btn-success-sm">Aktifleştir</button>
+            </form>
+            <% } %>
+            <form method="POST" action="/licenses/<%= l.id %>/renew-key" onsubmit="return confirm('API key yenilenecek. Eski key çalışmaz. Devam?')">
+              <button class="btn-sm">Key Yenile</button>
+            </form>
+            <form method="POST" action="/licenses/<%= l.id %>/delete" onsubmit="return confirm('Lisansı sil?')">
+              <button class="btn-danger-sm">Sil</button>
+            </form>
+          </td>
+        </tr>
+        <% }) %>
+      </tbody>
+    </table>
+  </main>
+</body>
+</html>

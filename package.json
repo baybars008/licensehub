@@ -1,0 +1,19 @@
+{
+  "name": "licensehub",
+  "version": "1.0.0",
+  "description": "License management system for Revoria SaaS products",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "node src/index.js",
+    "dev": "node --watch src/index.js"
+  },
+  "dependencies": {
+    "better-sqlite3": "^9.4.3",
+    "bcryptjs": "^2.4.3",
+    "connect-sqlite3": "^0.9.13",
+    "ejs": "^3.1.10",
+    "express": "^4.19.2",
+    "express-session": "^1.18.0",
+    "uuid": "^9.0.1"
+  }
+}

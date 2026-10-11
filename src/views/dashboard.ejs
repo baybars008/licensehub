@@ -1,0 +1,100 @@
+<%
+  const layout = require;
+  const body = `
+<h1>Dashboard</h1>
+<div class="stats-grid">
+  <div class="stat-card">
+    <span class="stat-number">${stats.total}</span>
+    <span class="stat-label">Toplam Lisans</span>
+  </div>
+  <div class="stat-card active">
+    <span class="stat-number">${stats.active}</span>
+    <span class="stat-label">Aktif</span>
+  </div>
+  <div class="stat-card warning">
+    <span class="stat-number">${stats.expiringSoon}</span>
+    <span class="stat-label">30 Günde Bitiyor</span>
+  </div>
+  <div class="stat-card danger">
+    <span class="stat-number">${stats.expired}</span>
+    <span class="stat-label">Süresi Dolmuş</span>
+  </div>
+</div>
+`;
+%>
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard — LicenseHub</title>
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+  <nav class="sidebar">
+    <div class="logo">🔑 LicenseHub</div>
+    <a href="/" class="active">Dashboard</a>
+    <a href="/customers">Müşteriler</a>
+    <a href="/licenses">Lisanslar</a>
+    <a href="/logs">Loglar</a>
+    <form action="/logout" method="POST" style="margin-top:auto">
+      <button type="submit" class="logout-btn">Çıkış</button>
+    </form>
+  </nav>
+  <main class="content">
+    <h1>Dashboard</h1>
+    <div class="stats-grid">
+      <div class="stat-card">
+        <span class="stat-number"><%= stats.total %></span>
+        <span class="stat-label">Toplam Lisans</span>
+      </div>
+      <div class="stat-card active">
+        <span class="stat-number"><%= stats.active %></span>
+        <span class="stat-label">Aktif</span>
+      </div>
+      <div class="stat-card warning">
+        <span class="stat-number"><%= stats.expiringSoon %></span>
+        <span class="stat-label">30 Günde Bitiyor</span>
+      </div>
+      <div class="stat-card danger">
+        <span class="stat-number"><%= stats.expired + stats.suspended %></span>
+        <span class="stat-label">Pasif / Süresi Dolmuş</span>
+      </div>
+    </div>
+
+    <h2>Son Lisanslar</h2>
+    <table class="data-table">
+      <thead><tr><th>Müşteri</th><th>Domain</th><th>Ürün</th><th>Plan</th><th>Durum</th><th>Bitiş</th></tr></thead>
+      <tbody>
+        <% recent.forEach(l => { %>
+        <tr>
+          <td><%= l.customer_name %></td>
+          <td><code><%= l.domain %></code></td>
+          <td><span class="badge"><%= l.product %></span></td>
+          <td><%= l.plan %></td>
+          <td><span class="status status-<%= l.status %>"><%= l.status %></span></td>
+          <td><%= l.expires_at || '∞' %></td>
+        </tr>
+        <% }) %>
+      </tbody>
+    </table>
+
+    <h2>Son Doğrulama Logları</h2>
+    <table class="data-table">
+      <thead><tr><th>Domain</th><th>Ürün</th><th>Sonuç</th><th>Neden</th><th>IP</th><th>Zaman</th></tr></thead>
+      <tbody>
+        <% recentLogs.forEach(l => { %>
+        <tr>
+          <td><%= l.domain %></td>
+          <td><%= l.product %></td>
+          <td><span class="status status-<%= l.result %>"><%= l.result %></span></td>
+          <td><%= l.reason || '' %></td>
+          <td><small><%= l.ip %></small></td>
+          <td><small><%= l.checked_at %></small></td>
+        </tr>
+        <% }) %>
+      </tbody>
+    </table>
+  </main>
+</body>
+</html>

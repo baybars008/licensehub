@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Loglar — LicenseHub</title>
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+  <nav class="sidebar">
+    <div class="logo">🔑 LicenseHub</div>
+    <a href="/">Dashboard</a>
+    <a href="/customers">Müşteriler</a>
+    <a href="/licenses">Lisanslar</a>
+    <a href="/logs" class="active">Loglar</a>
+    <form action="/logout" method="POST" style="margin-top:auto">
+      <button type="submit" class="logout-btn">Çıkış</button>
+    </form>
+  </nav>
+  <main class="content">
+    <h1>Doğrulama Logları <small>(son 200)</small></h1>
+    <table class="data-table">
+      <thead><tr><th>Zaman</th><th>Domain</th><th>Ürün</th><th>Sonuç</th><th>Neden</th><th>IP</th></tr></thead>
+      <tbody>
+        <% logs.forEach(l => { %>
+        <tr>
+          <td><small><%= l.checked_at %></small></td>
+          <td><code><%= l.domain %></code></td>
+          <td><span class="badge"><%= l.product %></span></td>
+          <td><span class="status status-<%= l.result %>"><%= l.result %></span></td>
+          <td><%= l.reason || '' %></td>
+          <td><small><%= l.ip || '' %></small></td>
+        </tr>
+        <% }) %>
+      </tbody>
+    </table>
+  </main>
+</body>
+</html>

@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Müşteriler — LicenseHub</title>
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+  <nav class="sidebar">
+    <div class="logo">🔑 LicenseHub</div>
+    <a href="/">Dashboard</a>
+    <a href="/customers" class="active">Müşteriler</a>
+    <a href="/licenses">Lisanslar</a>
+    <a href="/logs">Loglar</a>
+    <form action="/logout" method="POST" style="margin-top:auto">
+      <button type="submit" class="logout-btn">Çıkış</button>
+    </form>
+  </nav>
+  <main class="content">
+    <h1>Müşteriler</h1>
+
+    <% if (error) { %><div class="alert alert-error"><%= error %></div><% } %>
+
+    <div class="card">
+      <h2>Yeni Müşteri</h2>
+      <form method="POST" action="/customers" class="inline-form">
+        <input type="text" name="name" placeholder="Müşteri adı" required>
+        <input type="email" name="email" placeholder="Email" required>
+        <button type="submit" class="btn-primary">Ekle</button>
+      </form>
+    </div>
+
+    <table class="data-table">
+      <thead><tr><th>Ad</th><th>Email</th><th>Lisans</th><th>Kayıt</th><th></th></tr></thead>
+      <tbody>
+        <% customers.forEach(c => { %>
+        <tr>
+          <td><strong><%= c.name %></strong></td>
+          <td><%= c.email %></td>
+          <td><%= c.license_count %></td>
+          <td><small><%= c.created_at.split('T')[0] || c.created_at %></small></td>
+          <td>
+            <form method="POST" action="/customers/<%= c.id %>/delete" onsubmit="return confirm('Müşteriyi ve tüm lisanslarını sil?')">
+              <button type="submit" class="btn-danger-sm">Sil</button>
+            </form>
+          </td>
+        </tr>
+        <% }) %>
+      </tbody>
+    </table>
+  </main>
+</body>
+</html>
