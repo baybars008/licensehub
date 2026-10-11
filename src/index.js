@@ -10,9 +10,11 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 const DATA_DIR = process.env.DATA_DIR || path.join(__dirname, '..', 'data');
 
-const ADMIN_PASSWORD_HASH = process.env.ADMIN_PASSWORD
-  ? bcrypt.hashSync(process.env.ADMIN_PASSWORD, 10)
-  : bcrypt.hashSync('changeme', 10);
+if (!process.env.ADMIN_PASSWORD) {
+  console.error('FATAL: ADMIN_PASSWORD env var must be set');
+  process.exit(1);
+}
+const ADMIN_PASSWORD_HASH = bcrypt.hashSync(process.env.ADMIN_PASSWORD, 10);
 
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
